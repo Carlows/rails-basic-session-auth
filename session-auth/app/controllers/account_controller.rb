@@ -31,9 +31,35 @@ class AccountController < ApplicationController
     redirect_to login_url
   end
 
+  def external_auth
+  	user = User.find_by(uid: auth_hash[:uid])
+
+    if user
+      session[:user_id] = user.id
+      redirect_to '/'
+    else
+  		newUser = User.create_with_omniauth(auth_hash)
+
+      if newUser
+        session[:user_id] = newUser.id
+        redirect_to '/'
+      else
+        redirect_to authfailure_url
+      end
+  	end
+
+  end
+
+  def external_auth_failure
+  end
+
   	private
 
 		def signup_user_params
 		  params.require(:user).permit(:email, :password, :password_confirmation)
+		end
+
+		def auth_hash
+			request.env['omniauth.auth']
 		end
 end

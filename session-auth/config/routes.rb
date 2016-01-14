@@ -4,6 +4,8 @@ Rails.application.routes.draw do
   get 'login' => 'account#login_form'
   post 'login' => 'account#login'
   post 'logout' => 'account#logout'
+  post 'auth/steam/callback' => 'account#external_auth', as: 'steam_login'
+  get 'auth/failure' => 'account#external_auth_failure', as: 'authfailure'
 
   get 'home/index'
   root 'home#index'
